@@ -53,19 +53,26 @@ export const ReportingBot = () => {
     }, []);
 
     return (
-        <Container maxWidth="sm">
+        <Container maxWidth="lg" sx={{ mt: 4 }}>
             <Box
                 sx={{
-                    marginTop: 4,
-                    padding: 3,
-                    border: "1px solid #ddd",
-                    borderRadius: 2,
-                    boxShadow: 3,
+                    p: 3,
+                    height: "80vh",
+                    border: "1px solid #93c5fd", // light blue border (similar to Tailwind's border-blue-300)
+                    borderRadius: 5,
+                    boxShadow: "0 0 10px 2px rgba(29, 78, 216, 0.6)",
                     backgroundColor: "white",
                 }}
             >
-                <Typography variant="h5" gutterBottom>
-                    Reporting Bot
+                <Typography
+                    variant="h5"
+                    gutterBottom
+                    sx={{
+                        color: "#1D4ED8",
+                        fontWeight: "bold",
+                    }}
+                >
+                    Dr. Report
                 </Typography>
                 <ChatMessages messages={messages} isWaitingBot={isWaitingBot} />
                 <ChatInput
