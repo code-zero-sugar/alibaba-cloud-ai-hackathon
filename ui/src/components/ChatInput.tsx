@@ -1,5 +1,5 @@
 // ChatInput.jsx
-import { SyntheticEvent, useState } from "react";
+import { useState } from "react";
 import { Box, TextField, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import AudioRecorder from "./AudioRecorder";
