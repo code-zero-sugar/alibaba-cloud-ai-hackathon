@@ -1,0 +1,77 @@
+reporting_task:
+    description: >
+        Given the natural language incident description provided by the user,
+        extract and organize the information into three parts:
+        1. Description - what happened, including patient characteristics, incident characteristics, and location;
+        2. Explanation - why it happened, including perceived causes, contributing factors, and mitigating factors;
+        3. Action - actions taken, including any process reviews, redesigns, educational steps, or organizational changes.
+        {data}
+    expected_output: >
+        Return a valid Python dictionary that conforms to the IncidentReportDto Pydantic model, including:
+
+        {
+          "desc": "...",               # What happened
+          "explanation": "...",        # Why it happened
+          "action": "...",             # What was done
+          "reported_by": null,         # UUID of reporter, or null
+        }
+
+        Each text field should be a well-written paragraph based on the input.
+        Use a placeholder value for `id`, `created_at`, and `updated_at`.
+        Do not include any additional text or formatting — return only the dictionary.
+    agent: incident_reporter
+
+evaluation_task:
+    description: >
+        Review the user-provided incident details to determine whether enough information is present
+        to generate a proper incident report. If any critical details are missing, notify the manager agent
+        with the list of missing items or questions to ask the user.
+
+        The agent should analyze the narrative for:
+        - Description (what happened, including location and parties involved)
+        - Explanation (why it happened, including causes or contributing factors)
+        - Remedial Measures (actions taken, planned improvements, or changes)
+
+        If all necessary information is present, notify the manager that the report is complete
+        and no further questions are needed. Otherwise, list the exact missing details or questions to ask.
+
+    expected_output: >
+        The output should clearly communicate the following:
+
+        - Whether the provided information is sufficient (e.g., "The information is complete" or "The report is missing key details")
+        - If information is missing, list the specific questions the manager should ask the user to fill the gaps.
+        - Ensure all necessary follow-up questions are included in a single response to minimize back-and-forth with the user.
+
+    agent: evaluation_agent
+
+manager_task:
+    description: >
+        Orchestrate the entire incident reporting workflow by interpreting user messages,
+        coordinating responses between the evaluation_agent and incident_reporter,
+        and managing the overall conversation state.
+
+        Responsibilities include:
+        - Forwarding initial incident descriptions to the evaluation_agent for analysis.
+        - If the evaluation result indicates missing information, generate a user-friendly Markdown-formatted message listing **all** follow-up questions at once, so the user can provide all required information in one go.
+        - If the evaluation result is complete, send the input to the incident_reporter to generate a structured report.
+        - Then, respond with a Markdown-formatted message and include the structured report alongside it.
+
+        Markdown formatting rules:
+        - Use numbered lists for follow-up questions (e.g., 1. ..., 2. ...)
+        - Use bold headers or labels to separate sections if needed
+        - Ensure spacing and readability to maintain a professional tone
+
+        The manager must ensure that:
+        - Only one message is sent to the user at a time
+        - All necessary follow-up questions are asked together to minimize back-and-forth
+        - The entire workflow remains smooth and transparent
+    expected_output: >
+        The output must be a dictionary with:
+
+        {
+        "message": "...",           # A well-formatted Markdown response for the user
+        "incident_report": { ... } # Optional — only present if a complete structured report is generated
+        }
+
+        The message should be clearly written in Markdown, using numbered lists for questions and bolded section headers.
+    agent: manager_agent

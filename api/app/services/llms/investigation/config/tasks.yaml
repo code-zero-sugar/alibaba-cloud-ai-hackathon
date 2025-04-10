@@ -1,0 +1,15 @@
+analyse_incident_report_task:
+  description: >
+    Given the following user query about incident reports: "{query}",
+    use the RAG-based incident report retrieval tool to search for relevant historical data.
+    Analyze the retrieved content to generate an accurate, concise, and well-reasoned answer
+    based strictly on available information.
+    Provide a friendly, human-readable summary of the key insights,
+    and note that the complete incident report is attached for further details.
+  expected_output: >
+    {
+      "response": "A clear and comprehensive answer to the user's query. The explanation addresses the main points and explicitly mentions that the full incident report is attached for further details.",
+      "reference_reports_ids": ["A list of identifiers or brief summaries referring to the related incident reports"]
+    }
+  agent: incident_report_analyst
+
