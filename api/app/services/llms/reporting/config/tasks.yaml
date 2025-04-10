@@ -19,58 +19,79 @@ reporting_task:
         Use a placeholder value for `id`, `created_at`, and `updated_at`.
         Do not include any additional text or formatting — return only the dictionary.
     agent: incident_reporter
-
 evaluation_task:
     description: >
         Review the user-provided incident details to determine whether enough information is present
         to generate a proper incident report. If any critical details are missing, notify the manager agent
         with the list of missing items or questions to ask the user.
 
-        The agent should analyze the narrative for:
-        - Description (what happened, including location and parties involved)
-        - Explanation (why it happened, including causes or contributing factors)
-        - Remedial Measures (actions taken, planned improvements, or changes)
+        The agent should analyze for:
+        - Description (example: what happened, including location and parties involved)
+        - Explanation (example: why it happened, including causes or contributing factors)
+        - Remedial Measures (example: actions taken, planned improvements, or changes)
 
-        If all necessary information is present, notify the manager that the report is complete
-        and no further questions are needed. Otherwise, list the exact missing details or questions to ask.
+        Do not be overly strict or picky.
+        Be smart and context-aware: different incidents require different levels of detail.
+        Use good judgment to determine whether the provided information is sufficient for generating a meaningful, usable incident report.
+
+        ⚠️ Strict rule: You are allowed to request additional information at most **twice**.  
+        You must try to collect **everything needed in a single follow-up**, or at most one more if necessary.  
+        Do not keep prompting the user repeatedly — that creates a poor experience.
+        {data}
 
     expected_output: >
         The output should clearly communicate the following:
 
-        - Whether the provided information is sufficient (e.g., "The information is complete" or "The report is missing key details")
-        - If information is missing, list the specific questions the manager should ask the user to fill the gaps.
-        - Ensure all necessary follow-up questions are included in a single response to minimize back-and-forth with the user.
+        - Whether the provided information is enough to generate a report.
+        - If only necessary information is missing, list the questions to the manager.
+        - Keep questions short, clear, and focused only on what’s truly required based on the context of the incident.
 
     agent: evaluation_agent
 
 manager_task:
     description: >
         Orchestrate the entire incident reporting workflow by interpreting user messages,
-        coordinating responses between the evaluation_agent and incident_reporter,
-        and managing the overall conversation state.
+        coordinating responses between the evaluation_agent and incident_reporter.
+
+        The input data will include both user and bot messages.
+        - "user" messages are inputs provided by the user.
+        - "bot" messages are questions previously asked.
+        Use the full conversation context to evaluate completeness.
 
         Responsibilities include:
         - Forwarding initial incident descriptions to the evaluation_agent for analysis.
-        - If the evaluation result indicates missing information, generate a user-friendly Markdown-formatted message listing **all** follow-up questions at once, so the user can provide all required information in one go.
+        - If the evaluation result indicates missing important information, generate a user-friendly Markdown-formatted message listing **all** follow-up questions at once, so the user can provide everything needed in a single response.
         - If the evaluation result is complete, send the input to the incident_reporter to generate a structured report.
         - Then, respond with a Markdown-formatted message and include the structured report alongside it.
 
+
+        ⚠️ Strict rule: You are allowed to request additional information at most **twice**.  
+        You must try to collect **everything needed in a single follow-up**, or at most one more if necessary.  
+        Do not keep prompting the user repeatedly — that creates a poor experience.
+
         Markdown formatting rules:
         - Use numbered lists for follow-up questions (e.g., 1. ..., 2. ...)
-        - Use bold headers or labels to separate sections if needed
-        - Ensure spacing and readability to maintain a professional tone
+        - Use **bold headers** or **labels** for clear sectioning (e.g., **Incident Report**, **Next Steps**)
+        - Ensure proper spacing and formatting for a clean, professional, and readable message
 
         The manager must ensure that:
         - Only one message is sent to the user at a time
-        - All necessary follow-up questions are asked together to minimize back-and-forth
-        - The entire workflow remains smooth and transparent
+        - **All necessary follow-up questions are asked in a single message** to avoid frustrating the user
+        - The workflow remains seamless and easy to follow
+        - The LLM handles structure and phrasing so the user doesn’t need to worry about formatting
+        {data}
+
     expected_output: >
-        The output must be a dictionary with:
+        The output must be a dictionary with the following structure:
 
         {
-        "message": "...",           # A well-formatted Markdown response for the user
-        "incident_report": { ... } # Optional — only present if a complete structured report is generated
+          "message": "...",           # A well-formatted Markdown response for the user
+          "incident_report": { ... } # Optional — only present if a complete structured report is generated
         }
 
-        The message should be clearly written in Markdown, using numbered lists for questions and bolded section headers.
+        The "message" should always be written in Markdown:
+        - Use clear section titles when needed
+        - Follow-up questions should be short, numbered, and to the point
+        - The tone should be friendly and helpful, ensuring the user feels guided, not interrogated
+
     agent: manager_agent
