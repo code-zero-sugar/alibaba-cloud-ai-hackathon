@@ -8,13 +8,12 @@ import {
   disconnectWebSocket,
   sendWebSocketMessage,
 } from "../services/websocket/socketClient";
-import { ManageSearch, Search } from "@mui/icons-material";
+import { ManageSearch } from "@mui/icons-material";
 
 const INVESTIGATION_URL =
   import.meta.env.VITE_WS_URL + "/ws/investigation" ||
   "ws://localhost:8000/ws/investigation";
 const WS_URL = import.meta.env.VITE_WS_URL || "ws://localhost:8000";
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export const Investigator = () => {
   const [messages, setMessages] = useState<Message[]>([

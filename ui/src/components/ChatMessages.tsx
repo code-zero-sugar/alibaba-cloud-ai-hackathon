@@ -10,7 +10,7 @@ type ChatMessagesProps = {
 };
 
 const ChatMessages = ({ messages, isWaitingBot }: ChatMessagesProps) => {
-  const messagesEndRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {

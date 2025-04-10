@@ -1,5 +1,5 @@
 // ChatInput.jsx
-import { useState } from "react";
+import { SyntheticEvent, useState } from "react";
 import { Box, TextField, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import AudioRecorder from "./AudioRecorder";
@@ -19,7 +19,7 @@ const ChatInput = ({ onSend, isWaitingBot }: ChatInputProps) => {
         }
     };
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "Enter") {
             // Prevent form submission if wrapping in a form element.
             e.preventDefault();
