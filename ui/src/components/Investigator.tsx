@@ -8,10 +8,11 @@ import {
   disconnectWebSocket,
   sendWebSocketMessage,
 } from "../services/websocket/socketClient";
+import { ManageSearch, Search } from "@mui/icons-material";
 
 const INVESTIGATION_URL =
-    import.meta.env.VITE_WS_URL + "/ws/investigation" ||
-    "ws://localhost:8000/ws/investigation";
+  import.meta.env.VITE_WS_URL + "/ws/investigation" ||
+  "ws://localhost:8000/ws/investigation";
 const WS_URL = import.meta.env.VITE_WS_URL || "ws://localhost:8000";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -24,11 +25,15 @@ export const Investigator = () => {
   const handleSendMessage = useCallback(
     (content: string) => {
       const userMessage = { role: "user", content };
+      const input = {
+        query: content,
+        chat_history: messages,
+      };
       setMessages((prevMessages) => [...prevMessages, userMessage]);
       setIsWaitingBot(true);
-      sendWebSocketMessage(INVESTIGATION_URL, userMessage.content);
+      sendWebSocketMessage(INVESTIGATION_URL, JSON.stringify(input));
     },
-    [setMessages, setIsWaitingBot]
+    [setMessages, setIsWaitingBot, messages]
   );
 
   useEffect(() => {
@@ -67,10 +72,11 @@ export const Investigator = () => {
           gutterBottom
           sx={{
             color: "#1D4ED8",
-            fontWeight: 'bold',
+            fontWeight: "bold",
           }}
         >
-          Investigator
+          <ManageSearch sx={{ mr: 1, fontSize: 40 }} />
+          MedInsight
         </Typography>
         <ChatMessages messages={messages} isWaitingBot={isWaitingBot} />
         <ChatInput onSend={handleSendMessage} isWaitingBot={isWaitingBot} />

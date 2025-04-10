@@ -1,3 +1,4 @@
+import json
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from app.model.enquiry_response_dto import EnquiryResponseDto
@@ -45,7 +46,7 @@ async def query_incident_report(
 async def enquiry_incident_report(
     query: str, investigation_service: InvestigationServiceDep
 ) -> EnquiryResponseDto:
-    return await investigation_service.enquiry(query=query)
+    return await investigation_service.enquiry(query=query, chat_history="")
 
 
 async def websocket_investigation(
@@ -54,8 +55,11 @@ async def websocket_investigation(
     await manager.connect(websocket)
     try:
         while True:
-            query = await websocket.receive_text()
-            result = await investigation_service.enquiry(query=query)
+            input = await websocket.receive_text()
+            data = json.loads(input)
+            result = await investigation_service.enquiry(
+                query=data["query"], chat_history=data["chat_history"]
+            )
             await websocket.send_text(result.model_dump_json())
     except WebSocketDisconnect:
         manager.disconnect(websocket)

@@ -1,6 +1,7 @@
 analyse_incident_report_task:
   description: >
     Given the following user query about incident reports: "{query}",
+    And given the chat history: "{chat_history}",
     use the RAG-based incident report retrieval tool to search for relevant historical data.
     Analyze the retrieved content to generate an accurate, concise, and well-reasoned answer
     based strictly on available information.
