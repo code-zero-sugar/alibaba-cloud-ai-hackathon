@@ -25,8 +25,8 @@ class ChatSession(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
 
-    incident_report = relationship(
-        "IncidentReport", back_populates="chat_session", uselist=False
-    )
+    # incident_report = relationship(
+    #     "IncidentReport", back_populates="chat_session", uselist=False
+    # )
 
     messages = relationship("ChatMessage", back_populates="session")

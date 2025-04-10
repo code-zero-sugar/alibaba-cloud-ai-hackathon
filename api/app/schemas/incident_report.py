@@ -21,8 +21,6 @@ class IncidentReport(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
 
-    chat_session_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("chat_session.id"), unique=True, nullable=True
-    )
+    chat_session_id: Mapped[int] = mapped_column(Integer, unique=True, nullable=True)
 
-    chat_session = relationship("ChatSession", back_populates="incident_report")
+    # chat_session = relationship("ChatSession", back_populates="incident_report")

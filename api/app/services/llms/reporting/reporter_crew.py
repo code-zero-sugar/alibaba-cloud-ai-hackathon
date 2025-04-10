@@ -3,8 +3,7 @@ from typing import Optional
 from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, before_kickoff, crew, task
 
-from app.model.incident_report_dto import IncidentReportCreateDto
-from app.model.crew_output_model import ManagerResult
+from app.model.crew_output_model import ManagerResult, IncidentReport
 
 
 @CrewBase
@@ -38,7 +37,7 @@ class ReporterCrew:
     def reporting_task(self) -> Task:
         return Task(
             config=self.tasks_config["reporting_task"],
-            output_pydantic=IncidentReportCreateDto,
+            output_pydantic=IncidentReport,
         )
 
     @task
@@ -47,9 +46,7 @@ class ReporterCrew:
 
     @task
     def manager_task(self) -> Task:
-        return Task(
-            config=self.tasks_config["manager_task"], output_pydantic=ManagerResult
-        )
+        return Task(config=self.tasks_config["manager_task"], output_pydantic=ManagerResult)
 
     @crew
     def crew(self) -> Crew:

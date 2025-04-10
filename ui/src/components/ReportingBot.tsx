@@ -24,17 +24,25 @@ export const ReportingBot = () => {
             const userMessage = { role: "user", content };
             setMessages((prevMessages) => [...prevMessages, userMessage]);
             setIsWaitingBot(true);
-            sendWebSocketMessage(REPORTING_WS_URL, userMessage.content);
+            sendWebSocketMessage(
+                REPORTING_WS_URL,
+                JSON.stringify([...messages, userMessage])
+            );
         },
-        [setMessages, setIsWaitingBot]
+        [messages, setMessages, setIsWaitingBot]
     );
 
     useEffect(() => {
         connectWebSocket(REPORTING_WS_URL, (data) => {
+            const parsed = JSON.parse(data); // Convert JSON string to object
             const botMessage = {
                 role: "bot",
-                content: data,
+                content: parsed.message, // Now safe to access
             };
+            if (parsed.incident_report) {
+                (botMessage as Message).incident_report =
+                    parsed.incident_report;
+            }
             setIsWaitingBot(false);
             setMessages((prev) => [...prev, botMessage as Message]);
         });

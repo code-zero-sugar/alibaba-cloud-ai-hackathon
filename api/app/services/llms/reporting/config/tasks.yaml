@@ -13,7 +13,6 @@ reporting_task:
           "desc": "...",               # What happened
           "explanation": "...",        # Why it happened
           "action": "...",             # What was done
-          "reported_by": null,         # UUID of reporter, or null
         }
 
         Each text field should be a well-written paragraph based on the input.
