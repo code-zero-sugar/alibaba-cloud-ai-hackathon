@@ -16,4 +16,6 @@ RUN uv sync --no-dev
 
 COPY app/ app/
 
-CMD ["uv", "run", "fastapi", "run"]
+EXPOSE 80
+
+CMD ["uv", "run", "fastapi", "run", "--port", "80", "--host", "0.0.0.0"]

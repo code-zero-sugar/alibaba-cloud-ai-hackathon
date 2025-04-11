@@ -19,11 +19,13 @@ load_dotenv()
 class Session_Manager(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    async_connection_string: str = os.getenv("DATABASE_URL", "").replace(
-        "postgresql://", "postgresql+asyncpg://"
+    async_connection_string: str = (
+        os.getenv("DATABASE_URL", "").replace("postgresql://", "postgresql+asyncpg://")
+        + "?prepared_statement_cache_size=0"
     )
-    sync_connection_string: str = os.getenv("DATABASE_URL", "").replace(
-        "postgresql://", "postgresql+psycopg2://"
+    sync_connection_string: str = (
+        os.getenv("DATABASE_URL", "").replace("postgresql://", "postgresql+psycopg2://")
+        + "?prepared_statement_cache_size=0"
     )
     async_engine: AsyncEngine = create_async_engine(
         async_connection_string,
